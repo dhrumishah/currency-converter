@@ -1,0 +1,40 @@
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.grid-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  overflow: hidden;
+
+  white-space: nowrap;
+}
+
+.grid-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  padding: 40px;
+  background: white;
+  border-radius: 30px;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    justify-content: flex-start;
+    padding: 20px;
+  }
+  .grid-column #btn {
+    width: 30vw;
+  }
+  .grid-bg {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+  }
+}

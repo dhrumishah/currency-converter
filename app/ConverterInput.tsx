@@ -6,7 +6,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import ReactFlagsSelect from "react-flags-select";
-
+import "./ConverterInput.css";
+import DropDown from "./DropDown";
 type Props = {
   label: string;
 };
@@ -22,9 +23,6 @@ const ConverterInput = (props: Props) => {
         border: "2px solid #E0E0E0",
         borderRadius: "20px",
         padding: 4,
-        boxShadow: "10px 10px 5px 0px rgba(92, 96, 153, 1)",
-        WebkitBoxShadow: "10px 10px 5px 0px rgba(92, 96, 153, 1)",
-        MozBoxShadow: "10px 10px 5px 0px rgba(92, 96, 153, 1)",
         backgroundColor: "#fff",
       }}
     >
@@ -35,18 +33,13 @@ const ConverterInput = (props: Props) => {
           </Typography>
 
           <TextField
-            label="Enter amount"
             type="number"
-            variant="filled"
-            InputProps={{ inputProps: { min: 0 } }}
-            sx={{
-              border: "none",
-              mt: 1,
-            }}
+            variant="standard"
+            InputProps={{ inputProps: { min: 0 }, disableUnderline: true }}
           />
         </Stack>
         <Stack direction="column" flexWrap="wrap">
-          <Typography sx={{ color: "gray", mb: 1 }}>
+          {/* <Typography sx={{ color: "gray", mb: 1 }}>
             Selected Country: {selected}
           </Typography>
           <ReactFlagsSelect
@@ -63,7 +56,8 @@ const ConverterInput = (props: Props) => {
             selectedSize={14}
             selected={selected}
             onSelect={handleSelect}
-          />
+          /> */}
+          <DropDown />
         </Stack>
       </Stack>
     </Box>
