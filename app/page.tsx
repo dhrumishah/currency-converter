@@ -10,6 +10,24 @@ import "./page.css";
 type Props = {};
 
 const page = (props: Props) => {
+  // function handleCurrency() {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("apikey", "qGMMLTHEtOwOsv1NPW5Toh5zgKlBLPfu");
+
+  //   var requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow",
+  //     headers: myHeaders,
+  //   };
+
+  //   fetch(
+  //     "https://api.apilayer.com/fixer/latest?symbols=USD%2C%20HKD%2C%20AUD&base=INR",
+  //     requestOptions
+  //   )
+  //     .then((response) => response.text())
+  //     .then((result) => console.log(result))
+  //     .catch((error) => console.log("error", error));
+  // }
   return (
     <div className="page-container">
       <div className="grid-bg">
@@ -34,6 +52,7 @@ const page = (props: Props) => {
           <Button
             variant="contained"
             id="btn"
+            // onClick={handleCurrency}
             sx={{
               marginTop: 2,
               width: 1 / 5,

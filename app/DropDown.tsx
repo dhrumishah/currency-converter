@@ -5,7 +5,7 @@ import axios from "axios";
 
 type Props = {};
 
-const DropDown = async (props: Props) => {
+const DropDown = (props: Props) => {
   const [currency, setCurrency] = React.useState("INR");
 
   const handleChange = (event: SelectChangeEvent) => {
