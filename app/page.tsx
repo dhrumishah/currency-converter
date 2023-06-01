@@ -1,39 +1,62 @@
 "use client";
 import React, { useState } from "react";
-import ConverterInput from "./ConverterInput";
 import { Grid, Stack } from "@mui/material";
-import Arrow from "../public/arrow.png";
+import Arrow from "./../public/arrow.png";
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import "./page.css";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import "./ConverterInput.css";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import { ChangeEvent } from "react";
+import ReactCountryFlag from "react-country-flag";
+
+interface ApiResponse {
+  success: boolean;
+  timestamp: number;
+  base: string;
+  date: string;
+  rates: {
+    [key: string]: number;
+  };
+}
 
 type Props = {};
 
 const page = (props: Props) => {
-  const [selected, setSelected] = useState<any>("");
-  const [fromCurrency, setFromCurrency] = useState("INR");
-  const [toCurrency, setToCurrency] = useState("INR");
+  const [fromCurrency, setFromCurrency] = useState<string>("");
+  const [toCurrency, setToCurrency] = useState<string>("");
   const [fromCurrencyValue, setFromCurrencyValue] = useState<number>(0);
   const [toCurrencyValue, setToCurrencyValue] = useState<number>(0);
+  const [gbpValue, setGbpValue] = useState<number | null>(null);
 
-  const handleChangeFrom = (event: SelectChangeEvent) => {
-    setFromCurrencyValue(event.target.value as unknown as number);
-    console.log(event.target.value);
+  const handleChangeFrom = (event: ChangeEvent<HTMLInputElement>) => {
+    setFromCurrencyValue(parseInt(event.target.value));
+    console.log(event.target.value + " from value");
+
+    // handleCurrency()
   };
 
-  const handleChangeTo = (event: SelectChangeEvent) => {
-    setToCurrencyValue(event.target.value as unknown as number);
-    console.log(toCurrencyValue);
+  const handleChangeTo = (event: ChangeEvent<HTMLInputElement>) => {
+    setToCurrencyValue(parseInt(event.target.value));
+    console.log(toCurrencyValue + " to value");
+
+    // handleCurrency()
   };
-  const handleSelect = (countryCode: any) => {
-    setSelected(countryCode);
+  const handleSelectChangeFrom = (event: SelectChangeEvent) => {
+    if (toCurrency === "" || toCurrency !== event.target.value)
+      setFromCurrency(event.target.value);
+    else console.log("cannot be same");
   };
+
+  const handleSelectChangeTo = (event: SelectChangeEvent) => {
+    if (fromCurrency === "" || fromCurrency !== event.target.value)
+      setToCurrency(event.target.value);
+    else console.log("cannot be same");
+  };
+
   const handleCurrency = async () => {
     try {
       const myHeaders = new Headers();
@@ -54,8 +77,12 @@ const page = (props: Props) => {
         throw new Error("Request failed with status: " + response.status);
       }
 
-      const result = await response.text();
-      console.log(result);
+      const result: ApiResponse = await response.json();
+      const gbpValue = Object.values(result.rates)[0];
+      const price = fromCurrencyValue * gbpValue;
+      setGbpValue(price);
+
+      setToCurrencyValue(price);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -79,15 +106,17 @@ const page = (props: Props) => {
                   backgroundColor: "#fff",
                 }}
               >
-                <Stack direction="row" flexWrap="wrap" spacing={8}>
+                <Stack direction="row" spacing={8}>
                   <Stack direction="column" flexWrap="wrap">
                     <Typography sx={{ color: "gray", fontSize: "14px" }}>
-                      from
+                      From
                     </Typography>
 
                     <TextField
                       type="number"
                       variant="standard"
+                      sx={{ fontWeight: "bold" }}
+                      onChange={handleChangeFrom}
                       InputProps={{
                         inputProps: { min: 0 },
                         disableUnderline: true,
@@ -97,20 +126,57 @@ const page = (props: Props) => {
                   <Stack direction="column" flexWrap="wrap">
                     <div>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={toCurrency}
+                        labelId="select-from-label"
+                        id="select-from"
                         label="Currency"
-                        onChange={handleChangeFrom}
+                        onChange={handleSelectChangeFrom}
                         sx={{
                           backgroundColor: "#EFF4FE",
                           color: "#294FE2",
                           fontWeight: "700",
+                          "&:focus": {
+                            backgroundColor: "transparent", // Remove background color on focus
+                            borderRadius: 0, // Remove border radius on focus
+                            boxShadow: "none", // Remove box shadow on focus
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none", // Remove border
+                          },
                         }}
                       >
-                        <MenuItem value="USD">USD</MenuItem>
-                        <MenuItem value="INR">INR</MenuItem>
-                        <MenuItem value="HKD">HKD</MenuItem>
+                        <MenuItem value="USD">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="US" svg />
+                            <div>USD</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem value="INR">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="IN" svg />
+                            <div>INR</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem value="HKD">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="HK" svg />
+                            <div>HKD</div>
+                          </div>
+                        </MenuItem>
                       </Select>
                     </div>
                   </Stack>
@@ -130,7 +196,7 @@ const page = (props: Props) => {
                   backgroundColor: "#fff",
                 }}
               >
-                <Stack direction="row" flexWrap="wrap" spacing={8}>
+                <Stack direction="row" spacing={8}>
                   <Stack direction="column" flexWrap="wrap">
                     <Typography sx={{ color: "gray", fontSize: "14px" }}>
                       To
@@ -139,6 +205,9 @@ const page = (props: Props) => {
                     <TextField
                       type="number"
                       variant="standard"
+                      sx={{ fontWeight: "700" }}
+                      onChange={handleChangeTo}
+                      value={toCurrencyValue}
                       InputProps={{
                         inputProps: { min: 0 },
                         disableUnderline: true,
@@ -148,20 +217,57 @@ const page = (props: Props) => {
                   <Stack direction="column" flexWrap="wrap">
                     <div>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={toCurrency}
+                        labelId="select-to-label"
+                        id="select-to"
                         label="Currency"
-                        onChange={handleChangeTo}
+                        onChange={handleSelectChangeTo}
                         sx={{
                           backgroundColor: "#EFF4FE",
                           color: "#294FE2",
                           fontWeight: "700",
+                          "&:focus": {
+                            backgroundColor: "transparent", // Remove background color on focus
+                            borderRadius: 0, // Remove border radius on focus
+                            boxShadow: "none", // Remove box shadow on focus
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none", // Remove border
+                          },
                         }}
                       >
-                        <MenuItem value="USD">USD</MenuItem>
-                        <MenuItem value="INR">INR</MenuItem>
-                        <MenuItem value="HKD">HKD</MenuItem>
+                        <MenuItem value="USD">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="US" svg />
+                            <div>USD</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem value="INR">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="IN" svg />
+                            <div>INR</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem value="HKD">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ReactCountryFlag countryCode="HK" svg />
+                            <div>HKD</div>
+                          </div>
+                        </MenuItem>
                       </Select>
                     </div>
                   </Stack>
@@ -172,6 +278,7 @@ const page = (props: Props) => {
           <Button
             variant="contained"
             id="btn"
+            onClick={handleCurrency}
             sx={{
               marginTop: 2,
               width: 1 / 5,
