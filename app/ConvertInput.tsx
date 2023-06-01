@@ -25,7 +25,7 @@ interface ApiResponse {
 
 type Props = {};
 
-const page = (props: Props) => {
+const ConvertInput = (props: Props) => {
   const [fromCurrency, setFromCurrency] = useState<string>("");
   const [toCurrency, setToCurrency] = useState<string>("");
   const [fromCurrencyValue, setFromCurrencyValue] = useState<number>(0);
@@ -295,4 +295,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default ConvertInput;
